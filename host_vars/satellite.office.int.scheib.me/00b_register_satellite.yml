@@ -1,0 +1,37 @@
+---
+# These are the variables that are used by the role redhat.rhel_system_roles.rhc
+rhc_state: 'present'
+rhc_auth:
+  login:
+    username: '{{ satellite_rhsm_username }}'
+    password: '{{ satellite_rhsm_password }}'
+
+# Repositories to enable on the Satellite server (the Linux host, not the application)
+rhc_repositories:
+  - name: 'rhel-8-for-x86_64-baseos-rpms'
+    state: 'enabled'
+
+  - name: 'rhel-8-for-x86_64-appstream-rpms'
+    state: 'enabled'
+
+  - name: 'satellite-maintenance-6.12-for-rhel-8-x86_64-rpms'
+    state: 'enabled'
+
+  - name: 'satellite-6.12-for-rhel-8-x86_64-rpms'
+    state: 'enabled'
+
+# RHEL release to set in subscription-manager
+rhc_release: 8
+
+# We don't want to register to Red Hat Insights
+rhc_insights:
+  state: 'absent'
+  autoupdate: false
+  remediation: 'absent'
+
+# if you need a proxy, use the following variables
+# rhc_proxy:
+#   hostname: 'proxy-hostname'
+#   port: 4321
+#   username: 'proxy-hostname'
+#   password: 'proxy-password'

@@ -1,0 +1,27 @@
+---
+collections:
+  - name: 'redhat.satellite'
+    version: '>=3.10.0'
+
+  - name: 'redhat.satellite_operations'
+    version: '>=1.3.0'
+
+  - name: 'redhat.rhel_system_roles'
+    version: '>=1.21.1'
+
+  - name: 'ansible.posix'
+    version: '>=1.5.4'
+
+  - name: 'community.crypto'
+    version: '>=2.3.2'
+
+roles:
+  - name: 'satellite_proxmox_compute_ressource'
+    src: 'https://github.com/sscheib/ansible-role-satellite_proxmox_compute_ressource.git'
+    scm: 'git'
+    version: 'v1.0'
+
+  - name: 'rhel_iso_kickstart'
+    src: 'https://github.com/sscheib/ansible-role-rhel_iso_kickstart.git'
+    scm: 'git'
+    version: 'v1.0.2'

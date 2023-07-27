@@ -1,0 +1,5 @@
+---
+# Notifications settings
+sat_settings_notifications:
+  - name: 'rss_enable'
+    value: false

@@ -1,0 +1,72 @@
+---
+- name: 'Configure a Red Hat Satellite with template synchronization and synchronize the templates'
+  hosts: 'all'
+  gather_facts: false
+
+  tasks:
+    - name: 'Handle git connection via SSH'
+      when: satellite_settings | selectattr('name', 'match', 'template_sync_repo') | map(attribute='value') | join | split('://') | first | lower == 'ssh'
+      block:
+        - name: "Extract host of repository: {{ satellite_settings | selectattr('name', 'match', 'template_sync_repo') | map(attribute='value') | join }}"
+          ansible.builtin.set_fact:
+            _repo_host: "{{ satellite_settings | selectattr('name', 'match', 'template_sync_repo') | map(attribute='value') | join | split('://') | last | split('/') | first | regex_replace('^.+@', '') }}"
+
+        - name: 'Generate foreman SSH key'
+          community.crypto.openssh_keypair:
+            path: '/usr/share/foreman/.ssh/id_rsa'
+            type: 'rsa'
+            size: '4096'
+          become: true
+          become_user: 'foreman'
+
+        - name: 'Scan repository SSH host keys from: {{ _repo_host }}'
+          ansible.builtin.shell:
+            cmd: |
+              ssh-keyscan {{ _repo_host }} 2>/dev/null
+          changed_when: false
+          register: '__t_ssh_host_keys'
+
+        - name: 'Add SSH host keys to known_hosts file of foreman from: {{ _repo_host }}'
+          ansible.builtin.known_hosts:
+            name: '{{ _repo_host }}'
+            key: '{{ __t_host_key }}'
+          become: true
+          become_user: 'foreman'
+          loop: '{{ __t_ssh_host_keys.stdout_lines }}'
+          loop_control:
+            loop_var: '__t_host_key'
+
+        - name: 'Slurp foreman SSH key'
+          ansible.builtin.slurp:
+            src: '/usr/share/foreman/.ssh/id_rsa.pub'
+          register: '__t_foreman_pub_key'
+          become: true
+
+        - name: 'Deploy SSH key to the GitHub repository: {{ github_repository }}'
+          community.general.github_deploy_key:
+            owner: '{{ github_user }}'
+            repository: '{{ github_repository }}'
+            name: 'foreman-{{ inventory_hostname }}'
+            key: "{{ __t_foreman_pub_key['content'] | b64decode }}"
+            read_only: true
+            token: '{{ github_token }}'
+          delegate_to: 'localhost'
+
+    - name: 'Synchronize templates from git repository'
+      redhat.satellite.templates_import:
+        username: '{{ satellite_username }}'
+        password: '{{ satellite_password }}'
+        server_url: '{{ satellite_server_url }}'
+        validate_certs: '{{ satellite_validate_certs }}'
+        repo: "{{ satellite_settings | selectattr('name', 'match', 'template_sync_repo') | map(attribute='value') | join }}"
+        branch: "{{ satellite_settings | selectattr('name', 'match', 'template_sync_branch') | map(attribute='value') | join }}"
+        associate: "{{ satellite_settings | selectattr('name', 'match', 'template_sync_associate') | map(attribute='value') | join }}"
+        filter: "{{ satellite_settings | selectattr('name', 'match', 'template_sync_filter') | map(attribute='value') | join }}"
+        force: "{{ satellite_settings | selectattr('name', 'match', 'template_sync_force') | map(attribute='value') | join }}"
+        lock: >-
+          {{
+            (satellite_settings | selectattr('name', 'match', 'template_sync_lock') | map(attribute='value') | join | lower == 'lock') |
+            ternary(true, false)
+          }}
+        negate: "{{ satellite_settings | selectattr('name', 'match', 'template_sync_negate') | map(attribute='value') | join }}"
+        verbose: "{{ satellite_settings | selectattr('name', 'match', 'template_sync_verbose') | map(attribute='value') | join }}"

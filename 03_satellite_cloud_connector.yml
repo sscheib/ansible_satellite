@@ -1,0 +1,7 @@
+---
+- name: 'Configure Cloud Connector in a Red Hat Satellite'
+  hosts: 'all'
+  gather_facts: false
+  become: true
+  roles:
+    - 'redhat.satellite_operations.cloud_connector'

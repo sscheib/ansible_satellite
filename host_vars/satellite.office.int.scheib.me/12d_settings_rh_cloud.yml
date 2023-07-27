@@ -1,0 +1,14 @@
+---
+# Settings related to the Red Hat Cloud
+sat_settings_rh_cloud:
+  - name: 'allow_auto_inventory_upload'
+    value: true
+
+  - name: 'obfuscate_inventory_hostnames'
+    value: true
+
+  - name: 'obfuscate_inventory_ips'
+    value: true
+
+  - name: 'allow_auto_insights_sync'
+    value: true

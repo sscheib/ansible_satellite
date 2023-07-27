@@ -1,0 +1,6 @@
+---
+- name: 'Create sync plans in a Red Hat Satellite'
+  hosts: 'all'
+  gather_facts: false
+  roles:
+    - name: 'redhat.satellite.sync_plans'

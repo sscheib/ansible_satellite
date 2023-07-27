@@ -1,0 +1,9 @@
+---
+# Define the Domains
+satellite_domains:
+  - name: 'office.int.scheib.me'
+    description: 'office.int.scheib.me'
+    locations:
+      - '{{ satellite_location }}'
+    organizations:
+      - '{{ satellite_organization }}'

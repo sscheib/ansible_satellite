@@ -1,0 +1,6 @@
+---
+# Merging all host groups variables together
+satellite_hostgroups: '{{ sat_base_host_groups +
+                          sat_operating_system_host_groups +
+                          sat_service_host_groups +
+                          sat_lifecycle_environment_host_groups }}'

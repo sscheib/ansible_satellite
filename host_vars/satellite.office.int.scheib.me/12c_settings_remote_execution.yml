@@ -1,0 +1,8 @@
+---
+# Settings related to Remote Execution
+sat_settings_remote_execution:
+  - name: 'remote_execution_ssh_user'
+    value: 'remote-satellite'
+
+  - name: 'remote_execution_ssh_port'
+    value: 1905

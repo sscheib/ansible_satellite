@@ -1,0 +1,54 @@
+---
+# Define Content Views of Red Hat Products
+sat_content_views:
+  - name: 'cv-rhcdn-base-rhel-8'
+    lifecycle_environments: "{{ satellite_lifecycle_environments | map(attribute='name') }}"
+    repositories:
+      - name: 'Red Hat Enterprise Linux 8 for x86_64 - BaseOS RPMs 8'
+        product: 'Red Hat Enterprise Linux for x86_64'
+
+      - name: 'Red Hat Enterprise Linux 8 for x86_64 - AppStream RPMs 8'
+        product: 'Red Hat Enterprise Linux for x86_64'
+
+      - name: 'Red Hat Enterprise Linux 8 for x86_64 - BaseOS Kickstart 8.8'
+        product: 'Red Hat Enterprise Linux for x86_64'
+
+      - name: 'Red Hat Enterprise Linux 8 for x86_64 - AppStream Kickstart 8.8'
+        product: 'Red Hat Enterprise Linux for x86_64'
+
+  - name: 'cv-rhcdn-base-rhel-9'
+    lifecycle_environments: "{{ satellite_lifecycle_environments | map(attribute='name') }}"
+    repositories:
+      - name: 'Red Hat Enterprise Linux 9 for x86_64 - BaseOS RPMs 9'
+        product: 'Red Hat Enterprise Linux for x86_64'
+
+      - name: 'Red Hat Enterprise Linux 9 for x86_64 - AppStream RPMs 9'
+        product: 'Red Hat Enterprise Linux for x86_64'
+
+      - name: 'Red Hat Enterprise Linux 9 for x86_64 - BaseOS Kickstart 9.2'
+        product: 'Red Hat Enterprise Linux for x86_64'
+
+      - name: 'Red Hat Enterprise Linux 9 for x86_64 - AppStream Kickstart 9.2'
+        product: 'Red Hat Enterprise Linux for x86_64'
+
+  - name: 'cv-rhcdn-satellite_6_client-rhel-8'
+    repositories:
+      - name: 'Red Hat Satellite Client 6 for RHEL 8 x86_64 RPMs'
+        product: 'Red Hat Enterprise Linux for x86_64'
+
+  - name: 'cv-rhcdn-satellite_6_client-rhel-9'
+    repositories:
+      - name: 'Red Hat Satellite Client 6 for RHEL 9 x86_64 RPMs'
+        product: 'Red Hat Enterprise Linux for x86_64'
+
+  - name: 'cv-rhcdn-ansible_automation_platform-rhel-8'
+    lifecycle_environments: []
+    repositories:
+      - name: 'Red Hat Ansible Automation Platform 2.3 for RHEL 8 x86_64 RPMs'
+        product: 'Red Hat Ansible Automation Platform'
+
+  - name: 'cv-rhcdn-ansible_automation_platform-rhel-9'
+    lifecycle_environments: []
+    repositories:
+      - name: 'Red Hat Ansible Automation Platform 2.3 for RHEL 9 x86_64 RPMs'
+        product: 'Red Hat Ansible Automation Platform'

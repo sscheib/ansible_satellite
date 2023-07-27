@@ -1,0 +1,48 @@
+---
+# Initial Organization to create
+sat_initial_organization: 'org-core'
+
+# Initial Location to create
+sat_initial_location: 'loc-core'
+
+# Name of the Satellite package
+sat_package_name: 'satellite'
+
+# Satellite installer scenario
+satellite_installer_scenario: 'satellite'
+
+# Satellite installer verbosity
+satellite_installer_verbose: true
+
+# We don't need colors .. or do we? :>
+satellite_installer_no_colors: true
+
+# Satellite installer locale
+satellite_installer_locale: 'en_US.UTF-8'
+
+# Not setting this will use foreman-installer and thus we end up with a Foreman
+satellite_installer_package: 'satellite-installer'
+
+# Satellite installer timeout
+# The installer needs to be done during that timeframe, otherwise the task will fail
+satellite_installer_timeout: '3600'
+
+# Options to pass to the installer
+satellite_installer_options:
+  - '--foreman-initial-organization {{ sat_initial_organization }}'  # Initial Organization to create
+  - '--foreman-initial-location {{ sat_initial_location }}'  # Initial Location to create
+  - '--foreman-initial-admin-username {{ sat_initial_user }}'  # Initial user to create
+  - '--foreman-initial-admin-password {{ sat_initial_password }}'  # Password for the initial user
+  - '--puppet-runmode none'  # No Puppet, please
+  - '--foreman-proxy-dhcp false'  # Satellite should not manage the DHCP
+  - '--foreman-proxy-dns false'  # Satellite should not manage the DNS
+  - '--certs-server-cert {{ sat_cert_dest_path }}/{{ sat_certs_pub_key | basename }}'  # Satellite certificate (public key) to use
+  - '--certs-server-key {{ sat_cert_dest_path }}/{{ sat_certs_priv_key | basename }}'  # Satellite private key to use
+  - '--certs-server-ca-cert {{ sat_cert_dest_path }}/{{ sat_certs_ca_bundle | basename }}'  # CA bundle to use
+  - '--foreman-proxy-tftp true'  # Satellite should provide TFTP
+  - '--foreman-proxy-tftp-servername={{ inventory_hostname }}'  # Name of the TFTP server
+  - '--foreman-proxy-tftp-listen-on both'  # We want to serve both HTTP and HTTPS
+  - '--foreman-proxy-templates true'  # Enable the builtin Template Capsule
+  - '--enable-foreman-plugin-discovery'  # Whether to enable Satellite discovery
+  - '--enable-foreman-proxy-plugin-discovery'  # Whether to enable Satellite discovery
+  - '--foreman-proxy-http true'  # Serve content via HTTP and HTTPS (default)

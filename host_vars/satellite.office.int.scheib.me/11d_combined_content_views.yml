@@ -1,0 +1,5 @@
+---
+# Combine the Content Views of custom Products, the Content Views of Red Hat Products and the Composite Content Views
+satellite_content_views: '{{ sat_content_views +
+                             sat_content_views_custom_products +
+                             sat_composite_content_views }}'

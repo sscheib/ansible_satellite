@@ -1,0 +1,113 @@
+---
+- name: 'Publish and promote (composite) content views'
+  hosts: 'all'
+  gather_facts: false
+
+  tasks:
+    - name: 'Retrieve all content views'
+      redhat.satellite.resource_info:
+        username: '{{ satellite_username }}'
+        password: '{{ satellite_password }}'
+        server_url: '{{ satellite_server_url }}'
+        validate_certs: '{{ satellite_validate_certs }}'
+        organization: '{{ satellite_organization }}'
+        resource: 'content_views'
+        search: 'composite = false AND name != "Default Organization View"'
+      register: '__t_cvs'
+
+    - name: 'Publish content view version'
+      redhat.satellite.content_view_version:
+        username: '{{ satellite_username }}'
+        password: '{{ satellite_password }}'
+        server_url: '{{ satellite_server_url }}'
+        validate_certs: '{{ satellite_validate_certs }}'
+        organization: '{{ satellite_organization }}'
+        content_view: '{{ __t_cv.name }}'
+        state: 'present'
+        description: 'initial'
+        lifecycle_environments: >-
+          {{
+            (
+              satellite_content_views | selectattr('name', 'equalto', __t_cv.name) |
+              selectattr('lifecycle_environments', 'defined') | rejectattr('lifecycle_environments', 'match', '^\[\]$') | length > 0
+            ) | ternary
+            (
+              satellite_content_views | selectattr('name', 'equalto', __t_cv.name) | map(attribute='lifecycle_environments', default=[]) | join,
+              omit
+            )
+          }}
+      async: 3600
+      poll: 0
+      register: __t_async_cv_publish
+      loop: '{{ __t_cvs.resources }}'
+      loop_control:
+        loop_var: '__t_cv'
+        label: "{{ __t_cv.name }}"
+
+    - name: 'Wait for the content view publish to finish'
+      ansible.builtin.async_status:
+        jid: '{{ item.ansible_job_id }}'
+      when: >
+        item.ansible_job_id is defined
+        and item.ansible_job_id != ''
+      register: '__t_async_result_cv_publish'
+      until: __t_async_result_cv_publish.finished
+      retries: '{{ sat_content_view_publish_retries }}'
+      delay: 3
+      loop: '{{ __t_async_cv_publish.results }}'
+      loop_control:
+        label: '{{ item.__t_cv.name }}'
+
+    - name: 'Retrieve all composite content views'
+      redhat.satellite.resource_info:
+        username: '{{ satellite_username }}'
+        password: '{{ satellite_password }}'
+        server_url: '{{ satellite_server_url }}'
+        validate_certs: '{{ satellite_validate_certs }}'
+        organization: '{{ satellite_organization }}'
+        resource: 'content_views'
+        search: 'composite = true'
+      register: __t_ccvs
+
+    - name: 'Publish and optionally promote composite content view versions'
+      redhat.satellite.content_view_version:
+        username: '{{ satellite_username }}'
+        password: '{{ satellite_password }}'
+        server_url: '{{ satellite_server_url }}'
+        validate_certs: '{{ satellite_validate_certs }}'
+        organization: '{{ satellite_organization }}'
+        content_view: '{{ __t_ccv.name }}'
+        state: 'present'
+        description: 'initial'
+        lifecycle_environments: >-
+          {{
+            (
+              satellite_content_views | selectattr('name', 'equalto', __t_ccv.name) |
+              selectattr('lifecycle_environments', 'defined') | rejectattr('lifecycle_environments', 'match', '^\[\]$') | length > 0
+            ) | ternary
+            (
+              satellite_content_views | selectattr('name', 'equalto', __t_ccv.name) | map(attribute='lifecycle_environments', default=[]) | join,
+              omit
+            )
+          }}
+      async: 3600
+      poll: 0
+      register: __t_async_ccv_publish
+      loop: '{{ __t_ccvs.resources }}'
+      loop_control:
+        loop_var: '__t_ccv'
+        label: '{{ __t_ccv.name }}'
+
+    - name: 'Wait for the composite content view publish to finish'
+      ansible.builtin.async_status:
+        jid: '{{ item.ansible_job_id }}'
+      when: >
+        item.ansible_job_id is defined
+        and item.ansible_job_id != ''
+      register: '__t_async_result_ccv_publish'
+      until: __t_async_result_ccv_publish.finished
+      delay: 3
+      retries: '{{ sat_composite_content_view_publish_retries }}'
+      loop: '{{ __t_async_ccv_publish.results }}'
+      loop_control:
+        label: '{{ item.__t_ccv.name }}'

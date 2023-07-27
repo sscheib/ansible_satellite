@@ -1,0 +1,6 @@
+---
+# Enable downloading of the manifest
+satellite_manifest_download: true
+
+# Path to download the manifest to
+satellite_manifest_path: '~/manifest.zip'

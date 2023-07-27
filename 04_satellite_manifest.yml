@@ -1,0 +1,7 @@
+---
+- name: 'Download a manifest from access.redhat.com and upload it to a Red Hat Satellite'
+  hosts: 'all'
+  gather_facts: false
+  become: true
+  roles:
+    - 'redhat.satellite.manifest'

@@ -1,0 +1,22 @@
+---
+# General Global Parameters
+sat_global_parameters_general:
+  - name: 'selinux'
+    parameter_type: 'string'
+    hidden_value: false
+    value: 'enforcing'
+
+  - name: 'keyboard'
+    parameter_type: 'string'
+    hidden_value: false
+    value: 'de'
+
+  - name: 'time-zone'
+    parameter_type: 'string'
+    hidden_value: false
+    value: 'Europe/Berlin'
+
+  - name: 'p-enable_fips_deployment'
+    parameter_type: 'boolean'
+    hidden_value: false
+    value: true

@@ -1,0 +1,18 @@
+---
+# Define the Base and the Operating System level Host Groups
+sat_base_host_groups:
+  - name: 'hg-base'
+    architecture: 'x86_64'
+    organizations:
+      - 'org-core'
+
+sat_operating_system_host_groups:
+  - name: 'hg-rhel-8'
+    parent: 'hg-base'
+    operatingsystem: 'RedHat 8.8'
+    pxe_loader: 'PXELinux BIOS'
+
+  - name: 'hg-rhel-9'
+    parent: 'hg-base'
+    operatingsystem: 'RedHat 9.2'
+    pxe_loader: 'PXELinux BIOS'

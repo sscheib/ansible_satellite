@@ -1,0 +1,8 @@
+---
+# Define the Lifecycle Environments
+satellite_lifecycle_environments:
+  - name: 'lce-default-dev'
+    prior: 'Library'
+
+  - name: 'lce-default-prod'
+    prior: 'lce-default-dev'

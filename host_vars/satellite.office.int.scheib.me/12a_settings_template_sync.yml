@@ -1,0 +1,26 @@
+---
+# Settings related to Satellite's Template Sync
+sat_settings_template_sync:
+  - name: 'template_sync_verbose'
+    value: true
+
+  - name: 'template_sync_associate'
+    value: 'always'
+
+  - name: 'template_sync_filter'
+    value: '^(pv?t|snt)-'
+
+  - name: 'template_sync_repo'
+    value: 'ssh://git@github.com/sscheib/satellite_templates.git'
+
+  - name: 'template_sync_negate'
+    value: false
+
+  - name: 'template_sync_branch'
+    value: 'office'
+
+  - name: 'template_sync_force'
+    value: true
+
+  - name: 'template_sync_lock'
+    value: 'lock'

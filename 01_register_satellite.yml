@@ -1,0 +1,7 @@
+---
+- name: 'Register a system to the Red Hat Portal'
+  gather_facts: false
+  hosts: 'all'
+  become: true  # necessary for the role redhat.rhel_system_roles.rhc
+  roles:
+    - name: 'redhat.rhel_system_roles.rhc'

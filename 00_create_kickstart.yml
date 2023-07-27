@@ -1,0 +1,6 @@
+---
+- name: 'Create RHEL 8.8 ISO and embed Satellite Kickstart into the ISO'
+  hosts: 'localhost'
+  gather_facts: false
+  roles:
+    - 'rhel_iso_kickstart'

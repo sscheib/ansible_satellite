@@ -1,0 +1,34 @@
+---
+- name: 'Synchronize repositories in a Red Hat Satellite'
+  hosts: 'all'
+  gather_facts: false
+
+  tasks:
+    - name: 'Include tasks to synchronize repositories of a specific product'
+      redhat.satellite.repository_sync:
+        username: '{{ satellite_username }}'
+        password: '{{ satellite_password }}'
+        server_url: '{{ satellite_server_url }}'
+        organization: '{{ satellite_organization }}'
+        validate_certs: '{{ satellite_validate_certs }}'
+        product: '{{ __t_product }}'
+      async: 3600
+      poll: 0
+      register: '__t_async_repository_sync'
+      loop: "{{ satellite_products | map(attribute='name') | unique }}"
+      loop_control:
+        loop_var: '__t_product'
+
+    - name: 'Wait for the repositories to finish synchronizing'
+      ansible.builtin.async_status:
+        jid: '{{ __t_async.ansible_job_id }}'
+      when: >
+        __t_async.ansible_job_id is defined
+        and __t_async.ansible_job_id != ''
+      register: '__t_async_result_repository_sync'
+      until: __t_async_result_repository_sync.finished
+      retries: '{{ sat_repository_sync_retries }}'
+      delay: 3
+      loop: '{{ __t_async_repository_sync.results }}'
+      loop_control:
+        loop_var: '__t_async'

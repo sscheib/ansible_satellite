@@ -1,0 +1,7 @@
+---
+# Define sync plans
+satellite_sync_plans:
+  - name: 'sync-daily'
+    interval: 'daily'
+    sync_date: "{{ lookup('ansible.builtin.pipe', 'date +\"%Y-%m-%d %H:%M:%S %Z\"') }}"  # set the sync date to right *now*
+    products: "{{ satellite_products | map(attribute='name') | list }}"  # extract the Products from the previous definition we have done

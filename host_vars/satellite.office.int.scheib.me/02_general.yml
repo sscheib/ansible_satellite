@@ -1,0 +1,24 @@
+---
+# General variables that are reused multiple times
+
+# Whether to validate certificates when connecting to Satellite
+# (needs to be turned off if you have self-signed certificates and haven't imported the CA)
+satellite_validate_certs: true
+
+# Satellite URL
+satellite_server_url: 'https://{{ inventory_hostname }}'
+
+# Satellite Organization to perform all playbooks in
+satellite_organization: '{{ sat_initial_organization }}'
+
+# Satellite Location to add Subnets and Domains to 
+satellite_location: '{{ sat_initial_location }}'
+
+# Number of retries to wait for a repository synchronization
+sat_repository_sync_retries: 1800
+
+# Number of retries to wait for a content view publish and promote
+sat_content_view_publish_retries: 1800
+
+# Number of retries to wait for a composite content view publish and promote
+sat_composite_content_view_publish_retries: 1800

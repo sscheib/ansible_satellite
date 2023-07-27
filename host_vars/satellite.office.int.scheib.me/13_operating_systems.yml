@@ -1,0 +1,76 @@
+---
+# Satellite Operating System definitions
+satellite_operatingsystems:
+  - name: 'RedHat'
+    major: 8
+    minor: 8
+    description: 'RedHat 8.8'
+    os_family: 'Redhat'
+    password_hash: 'SHA256'
+    default_templates:
+      - template_kind: 'iPXE'
+        provisioning_template: 'pvt-ipxe'
+        state: 'present'
+
+      - template_kind: 'PXELinux'
+        provisioning_template: 'pvt-pxelinux'
+        state: 'present'
+
+      - template_kind: 'provision'
+        provisioning_template: 'pvt-provisioning'
+        state: 'present'
+
+      - template_kind: 'finish'
+        state: 'absent'
+
+      - template_kind: 'host_init_config'
+        state: 'absent'
+
+      - template_kind: 'kexec'
+        state: 'absent'
+
+      - template_kind: 'PXEGrub'
+        state: 'absent'
+
+      - template_kind: 'PXEGrub2'
+        state: 'absent'
+
+      - template_kind: 'user_data'
+        state: 'absent'
+
+  - name: 'RedHat'
+    major: 9
+    minor: 2
+    description: 'RedHat 9.2'
+    os_family: 'Redhat'
+    password_hash: 'SHA256'
+    default_templates:
+      - template_kind: 'iPXE'
+        provisioning_template: 'pvt-ipxe'
+        state: 'present'
+
+      - template_kind: 'PXELinux'
+        provisioning_template: 'pvt-pxelinux'
+        state: 'present'
+
+      - template_kind: 'provision'
+        provisioning_template: 'pvt-provisioning'
+        state: 'present'
+
+      - template_kind: 'finish'
+        state: 'absent'
+
+      - template_kind: 'host_init_config'
+        state: 'absent'
+
+      - template_kind: 'kexec'
+        state: 'absent'
+
+      - template_kind: 'PXEGrub'
+        state: 'absent'
+
+      - template_kind: 'PXEGrub2'
+        state: 'absent'
+
+      - template_kind: 'user_data'
+        state: 'absent'

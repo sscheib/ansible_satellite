@@ -1,0 +1,158 @@
+---
+# Note:
+# get labels as described via https://access.redhat.com/solutions/6370541 (an activation key has to be created to check)
+# hammer activation-key product-content --organization 'org-core' --name 'ak-ansible_automation_platform-rhel-8-dev' \
+# --content-access-mode-env true --content-access-mode-all true
+
+satellite_activation_keys:
+  - name: 'ak-ansible_automation_platform-rhel-8-dev'
+    description: 'Ansible Automation Platform hosts'
+    lifecycle_environment: 'lce-default-dev'
+    content_view: 'ccv-ansible_automation_platform-rhel-8'
+    release_version: 8
+    unlimited_hosts: true
+    service_level: 'Self-Support'
+    purpose_usage: 'Production'
+    purpose_role: 'Red Hat Enterprise Linux Server'
+    content_overrides:
+      - label: 'ansible-automation-platform-2.3-for-rhel-8-x86_64-rpms'
+        override: 'enabled'
+
+      - label: 'satellite-client-6-for-rhel-8-x86_64-rpms'
+        override: 'enabled'
+
+      - label: 'org-core_prd-elastic-elastic_repo-elastic-elastic-8-el-8'
+        override: 'enabled'
+
+      - label: 'org-core_prd-zabbix-zabbix_repo-zabbix-zabbix-6_0-rhel-8'
+        override: 'enabled'
+
+  - name: 'ak-ansible_automation_platform-rhel-8-prod'
+    description: 'Ansible Automation Platform hosts'
+    lifecycle_environment: 'lce-default-prod'
+    content_view: 'ccv-ansible_automation_platform-rhel-8'
+    release_version: 8
+    unlimited_hosts: true
+    service_level: 'Self-Support'
+    purpose_usage: 'Production'
+    purpose_role: 'Red Hat Enterprise Linux Server'
+    content_overrides:
+      - label: 'ansible-automation-platform-2.3-for-rhel-8-x86_64-rpms'
+        override: 'enabled'
+
+      - label: 'satellite-client-6-for-rhel-8-x86_64-rpms'
+        override: 'enabled'
+
+      - label: 'org-core_prd-elastic-elastic_repo-elastic-elastic-8-el-8'
+        override: 'enabled'
+
+      - label: 'org-core_prd-zabbix-zabbix_repo-zabbix-zabbix-6_0-rhel-8'
+        override: 'enabled'
+
+  - name: 'ak-ansible_automation_platform-rhel-9-dev'
+    description: 'Ansible Automation Platform hosts'
+    lifecycle_environment: 'lce-default-dev'
+    content_view: 'ccv-ansible_automation_platform-rhel-9'
+    release_version: 9
+    unlimited_hosts: true
+    service_level: 'Self-Support'
+    purpose_usage: 'Production'
+    purpose_role: 'Red Hat Enterprise Linux Server'
+    content_overrides:
+      - label: 'ansible-automation-platform-2.3-for-rhel-9-x86_64-rpms'
+        override: 'enabled'
+
+      - label: 'satellite-client-6-for-rhel-9-x86_64-rpms'
+        override: 'enabled'
+
+      - label: 'org-core_prd-zabbix-zabbix_repo-zabbix-zabbix-6_0-rhel-9'
+        override: 'enabled'
+
+  - name: 'ak-ansible_automation_platform-rhel-9-prod'
+    description: 'Ansible Automation Platform hosts'
+    lifecycle_environment: 'lce-default-prod'
+    content_view: 'ccv-ansible_automation_platform-rhel-9'
+    release_version: 9
+    unlimited_hosts: true
+    service_level: 'Self-Support'
+    purpose_usage: 'Production'
+    purpose_role: 'Red Hat Enterprise Linux Server'
+    content_overrides:
+      - label: 'ansible-automation-platform-2.3-for-rhel-9-x86_64-rpms'
+        override: 'enabled'
+
+      - label: 'satellite-client-6-for-rhel-9-x86_64-rpms'
+        override: 'enabled'
+
+      - label: 'org-core_prd-zabbix-zabbix_repo-zabbix-zabbix-6_0-rhel-9'
+        override: 'enabled'
+
+  - name: 'ak-default-rhel-8-dev'
+    description: "All hosts which don't have a specialized host group"
+    lifecycle_environment: 'lce-default-dev'
+    content_view: 'ccv-default-rhel-8'
+    release_version: 8
+    unlimited_hosts: true
+    service_level: 'Self-Support'
+    purpose_usage: 'Production'
+    purpose_role: 'Red Hat Enterprise Linux Server'
+    content_overrides:
+      - label: 'satellite-client-6-for-rhel-8-x86_64-rpms'
+        override: 'enabled'
+
+      - label: 'org-core_prd-elastic-elastic_repo-elastic-elastic-8-el-8'
+        override: 'enabled'
+
+      - label: 'org-core_prd-zabbix-zabbix_repo-zabbix-zabbix-6_0-rhel-8'
+        override: 'enabled'
+
+  - name: 'ak-default-rhel-8-prod'
+    description: "All hosts which don't have a specialized host group"
+    lifecycle_environment: 'lce-default-prod'
+    content_view: 'ccv-default-rhel-8'
+    release_version: 8
+    unlimited_hosts: true
+    service_level: 'Self-Support'
+    purpose_usage: 'Production'
+    purpose_role: 'Red Hat Enterprise Linux Server'
+    content_overrides:
+      - label: 'satellite-client-6-for-rhel-8-x86_64-rpms'
+        override: 'enabled'
+
+      - label: 'org-core_prd-elastic-elastic_repo-elastic-elastic-8-el-8'
+        override: 'enabled'
+
+      - label: 'org-core_prd-zabbix-zabbix_repo-zabbix-zabbix-6_0-rhel-8'
+        override: 'enabled'
+
+  - name: 'ak-default-rhel-9-dev'
+    description: "All hosts which don't have a specialized host group"
+    lifecycle_environment: 'lce-default-dev'
+    content_view: 'ccv-default-rhel-9'
+    release_version: 9
+    unlimited_hosts: true
+    service_level: 'Self-Support'
+    purpose_usage: 'Production'
+    purpose_role: 'Red Hat Enterprise Linux Server'
+    content_overrides:
+      - label: 'satellite-client-6-for-rhel-9-x86_64-rpms'
+        override: 'enabled'
+
+      - label: 'org-core_prd-zabbix-zabbix_repo-zabbix-zabbix-6_0-rhel-9'
+        override: 'enabled'
+
+  - name: 'ak-default-rhel-9-prod'
+    description: "All hosts which don't have a specialized host group"
+    lifecycle_environment: 'lce-default-prod'
+    content_view: 'ccv-default-rhel-9'
+    release_version: 9
+    unlimited_hosts: true
+    service_level: 'Self-Support'
+    purpose_usage: 'Production'
+    purpose_role: 'Red Hat Enterprise Linux Server'
+    content_overrides:
+      - label: 'satellite-client-6-for-rhel-9-x86_64-rpms'
+        override: 'enabled'
+
+      - label: 'org-core_prd-zabbix-zabbix_repo-zabbix-zabbix-6_0-rhel-9'
+        override: 'enabled'

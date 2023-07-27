@@ -1,0 +1,237 @@
+---
+- name: 'Configure OpenSCAP on a Red Hat Satellite'
+  hosts: 'all'
+  gather_facts: false
+  tasks:
+    - name: 'Handle enabling of OpenSCAP Ansible role'
+      when: >
+        sat_scap_enable_foreman_ansible_role is defined
+        and sat_scap_enable_foreman_ansible_role
+      block:
+
+        - name: 'Retrieve ID of {{ inventory_hostname }}'
+          redhat.satellite.resource_info:
+            username: '{{ satellite_username }}'
+            password: '{{ satellite_password }}'
+            server_url: '{{ satellite_server_url }}'
+            validate_certs: '{{ satellite_validate_certs }}'
+            resource: 'capsules'
+            search: 'name = {{ inventory_hostname }}'
+          register: '__t_capsules'
+        
+        - name: 'Ensure only one result is returned'
+          ansible.builtin.assert:
+            that:
+              - __t_capsules.resources is defined
+              - __t_capsules.resources is not string
+              - __t_capsules.resources is not mapping
+              - __t_capsules.resources is iterable
+              - __t_capsules.resources | length == 1
+              - __t_capsules.resources[0].id is defined
+              - __t_capsules.resources[0].id is number
+              - __t_capsules.resources[0].id | string | int == __t_capsules.resources[0].id | int
+
+        - name: 'Enable Foreman OpenSCAP Ansible role: {{ sat_scap_foreman_role_name }}'
+          ansible.builtin.uri:
+            url: '{{ satellite_server_url }}/ansible/api/ansible_roles/sync'
+            user: '{{ satellite_username }}'
+            password: '{{ satellite_password }}'
+            validate_certs: '{{ satellite_validate_certs }}'
+            method: 'PUT'
+            body: |
+              {{
+                {
+                  'proxy_id': __t_capsules.resources[0].id,
+                  'role_names': [
+                    sat_scap_foreman_role_name
+                  ]
+                }
+
+              }}
+            force_basic_auth: true
+            body_format: 'json'
+
+        - name: 'Ensure OpenSCAP role is available in Satellite'
+          ansible.builtin.uri:
+            url: '{{ satellite_server_url }}/ansible/api/ansible_roles'
+            user: '{{ satellite_username }}'
+            password: '{{ satellite_password }}'
+            validate_certs: '{{ satellite_validate_certs }}'
+            method: 'GET'
+            body: |
+              {{
+                {
+                  'search': 'name = ' ~ sat_scap_foreman_role_name
+                }
+              }}
+            force_basic_auth: true
+            body_format: 'json'
+          register: '__t_roles'
+          until: __t_roles.json.results | selectattr('name', 'match', sat_scap_foreman_role_name) | length == 1
+
+
+    - name: 'Handle unpacking and importing OpenSCAP content'
+      when:
+        sat_scap_content_files is defined and
+        sat_scap_content_files | length > 0
+      block:
+
+        - name: 'Download and unpack OpenSCAP content'
+          ansible.builtin.unarchive:
+            src: '{{ __t_content.url }}'
+            dest: '{{ sat_scap_content_download_path }}'
+            mode: 0600
+            remote_src: true
+          loop: '{{ sat_scap_content_files }}'
+          loop_control:
+            loop_var: '__t_content'
+            label: '{{ __t_content.name }}'
+          delegate_to: 'localhost'
+
+        - name: 'Generate digest hashes of OpenSCAP content'
+          ansible.builtin.set_fact:
+            __t_scap_content_digests: >-
+              {{ 
+                __t_scap_content_digests | default([]) + 
+                [ 
+                  item | combine(
+                    {
+                      'digest': lookup('file', sat_scap_content_download_path ~ '/' ~ item.url | basename | regex_replace('.zip$', '.xml')) | hash('sha256'),
+                      'file': sat_scap_content_download_path ~ '/' ~ item.url | basename | regex_replace('.zip$', '.xml')
+                    }
+                  )
+                ]
+              }}
+          loop: '{{ sat_scap_content_files }}'
+
+        - name: 'Get populated OpenSCAP contents of {{ inventory_hostname }}'
+          ansible.builtin.uri:
+            url: '{{ satellite_server_url }}/api/v2/compliance/scap_contents'
+            user: '{{ satellite_username }}'
+            password: '{{ satellite_password }}'
+            validate_certs: '{{ satellite_validate_certs }}'
+            method: 'GET'
+            force_basic_auth: true
+            body_format: 'json'
+          delegate_to: 'localhost'
+          register: '__t_available_scap_contents'
+
+        - name: 'Ensure returned contents have the correct data type'
+          ansible.builtin.assert:
+            that:
+              - __t_available_scap_contents.json.results is defined
+              - __t_available_scap_contents.json.results is not string
+              - __t_available_scap_contents.json.results is not mapping
+              - __t_available_scap_contents.json.results is iterable
+
+        - name: 'Handle updating and creating OpenSCAP content'
+          block:
+
+            - name: 'Create OpenSCAP content {{ __t_content.name }}'
+              ansible.builtin.uri:
+                url: '{{ satellite_server_url }}/api/v2/compliance/scap_contents'
+                user: '{{ satellite_username }}'
+                password: '{{ satellite_password }}'
+                validate_certs: '{{ satellite_validate_certs }}'
+                method: 'POST'
+                body: |
+                  {{
+                    {
+                      'scap_content': {
+                        'title': __t_content.name,
+                        'scap_file': lookup('file', __t_content.file),
+                        'original_filename': __t_content.file | basename
+                      }
+                    }
+                  }}
+                force_basic_auth: true
+                body_format: 'json'
+                status_code: 201
+              changed_when: true
+              when: >
+                __t_available_scap_contents.json.results | selectattr('title', 'equalto', __t_content.name) | length == 0
+              delegate_to: 'localhost'
+              loop: '{{ __t_scap_content_digests }}'
+              loop_control:
+                loop_var: '__t_content'
+                label: '{{ __t_content.name }}'
+
+            - name: 'Delete OpenSCAP content {{ __t_conent.name }}'
+              ansible.builtin.uri:
+                url: '{{ satellite_server_url }}/api/v2/compliance/scap_contents/{{ __t_content.1.id }}'
+                user: '{{ satellite_username }}'
+                password: '{{ satellite_password }}'
+                validate_certs: '{{ satellite_validate_certs }}'
+                method: 'DELETE'
+                force_basic_auth: true
+                body_format: 'json'
+              changed_when: true
+              when: >
+                __t_content.0.name == __t_content.1.title
+                and __t_content.0.digest != __t_content.1.digest
+              delegate_to: 'localhost'
+              loop: '{{ __t_scap_content_digests | product(__t_available_scap_contents.json.results) }}'
+              loop_control:
+                loop_var: '__t_content'
+                label: "{{ __t_content.0.name ~ '->' ~ __t_content.1.title }}"
+
+            - name: 'Re-create OpenSCAP content {{ __t_content.name }}'
+              ansible.builtin.uri:
+                url: '{{ satellite_server_url }}/api/v2/compliance/scap_contents'
+                user: '{{ satellite_username }}'
+                password: '{{ satellite_password }}'
+                validate_certs: '{{ satellite_validate_certs }}'
+                method: 'POST'
+                body: |
+                  {{
+                    {
+                      'scap_content': {
+                        'title': __t_content.0.name,
+                        'scap_file': lookup('file', __t_content.0.file),
+                        'original_filename': __t_content.0.file | basename
+                      }
+                    }
+                  }}
+                force_basic_auth: true
+                body_format: 'json'
+                status_code: 201
+              changed_when: true
+              when: >
+                __t_content.0.name == __t_content.1.title
+                and __t_content.0.digest != __t_content.1.digest
+              delegate_to: 'localhost'
+              loop: '{{ __t_scap_content_digests | product(__t_available_scap_contents.json.results) }}'
+              loop_control:
+                loop_var: '__t_content'
+                label: "{{ __t_content.0.name ~ '->' ~ __t_content.1.title }}"
+
+            - name: 'Cleanup downloaded files'
+              ansible.builtin.file:
+                path: "{{ sat_scap_content_download_path ~ '/' ~ item.url | basename | splitext | first ~ '.xml' }}"
+                state: 'absent'
+              become: true
+              delegate_to: 'localhost'
+              loop: '{{ sat_scap_content_files }}'
+              when: >
+                sat_scap_cleanup_temp_files is defined
+                and sat_scap_cleanup_temp_files
+
+    - name: 'Enable default OpenSCAP content provided by Satellite'
+      ansible.builtin.uri:
+        url: '{{ satellite_server_url }}/api/v2/compliance/scap_contents/bulk_upload'
+        user: '{{ satellite_username }}'
+        password: '{{ satellite_password }}'
+        validate_certs: '{{ satellite_validate_certs }}'
+        method: 'POST'
+        body: |
+          {{
+            {
+              'type': 'default'
+            }
+          }}
+        force_basic_auth: true
+        body_format: 'json'
+      delegate_to: 'localhost'
+      when: >
+        sat_scap_enable_default_content is defined
+        and sat_scap_enable_default_content

@@ -1,0 +1,7 @@
+---
+# Merge all settings variables, excluding the provisioning settings as the template getting set, is not available yet (needs to be imported first)
+satellite_settings: '{{ sat_settings_template_sync +
+                        sat_settings_remote_execution +
+                        sat_settings_rh_cloud +
+                        sat_settings_notifications +
+                        sat_settings_general }}'

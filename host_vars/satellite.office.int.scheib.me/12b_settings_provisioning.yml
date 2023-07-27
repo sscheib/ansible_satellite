@@ -1,0 +1,5 @@
+---
+# Settings related to Provisioning
+sat_settings_provisioning:
+  - name: 'local_boot_PXELinux'
+    value: 'pvt-pxelinux_default_local_boot'

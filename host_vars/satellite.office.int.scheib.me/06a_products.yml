@@ -1,0 +1,51 @@
+---
+sat_products:
+  # Red Hat repositories
+  #
+  - name: 'Red Hat Enterprise Linux for x86_64'
+    repository_sets:
+      - name: 'Red Hat Enterprise Linux 9 for x86_64 - BaseOS (RPMs)'
+        releasever: 9
+        download_policy: 'on_demand'
+
+      - name: 'Red Hat Enterprise Linux 9 for x86_64 - AppStream (RPMs)'
+        releasever: 9
+        download_policy: 'on_demand'
+
+      - name: 'Red Hat Enterprise Linux 9 for x86_64 - BaseOS (Kickstart)'
+        releasever: 9.2
+        download_policy: 'immediate'
+
+      - name: 'Red Hat Enterprise Linux 9 for x86_64 - AppStream (Kickstart)'
+        releasever: 9.2
+        download_policy: 'immediate'
+
+      - name: 'Red Hat Satellite Client 6 for RHEL 9 x86_64 (RPMs)'
+        download_policy: 'on_demand'
+
+      - name: 'Red Hat Enterprise Linux 8 for x86_64 - BaseOS (RPMs)'
+        releasever: 8
+        download_policy: 'on_demand'
+
+      - name: 'Red Hat Enterprise Linux 8 for x86_64 - AppStream (RPMs)'
+        releasever: 8
+        download_policy: 'on_demand'
+
+      - name: 'Red Hat Enterprise Linux 8 for x86_64 - BaseOS (Kickstart)'
+        releasever: 8.8
+        download_policy: 'immediate'
+
+      - name: 'Red Hat Enterprise Linux 8 for x86_64 - AppStream (Kickstart)'
+        releasever: 8.8
+        download_policy: 'immediate'
+
+      - name: 'Red Hat Satellite Client 6 for RHEL 8 x86_64 (RPMs)'
+        download_policy: 'on_demand'
+
+  - name: 'Red Hat Ansible Automation Platform'
+    repository_sets:
+      - name: 'Red Hat Ansible Automation Platform 2.3 for RHEL 8 x86_64 (RPMs)'
+        download_policy: 'on_demand'
+
+      - name: 'Red Hat Ansible Automation Platform 2.3 for RHEL 9 x86_64 (RPMs)'
+        download_policy: 'on_demand'

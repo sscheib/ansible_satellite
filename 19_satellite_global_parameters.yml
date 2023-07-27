@@ -1,0 +1,21 @@
+---
+- name: 'Configure global parameters in a Red Hat Satellite'
+  hosts: 'all'
+  gather_facts: false
+
+  tasks:
+    - name: 'Configure global parameters'
+      redhat.satellite.global_parameter:
+        username: '{{ satellite_username }}'
+        password: '{{ satellite_password }}'
+        server_url: '{{ satellite_server_url }}'
+        validate_certs: '{{ satellite_validate_certs }}'
+        name: '{{ __t_param.name }}'
+        value: '{{ __t_param.value }}'
+        parameter_type: '{{ __t_param.parameter_type }}'
+        hidden_value: '{{ __t_param.hidden_value }}'
+        state: 'present'
+      loop: '{{ sat_global_parameters }}'
+      loop_control:
+        loop_var: '__t_param'
+        label: '{{ __t_param.name }}'

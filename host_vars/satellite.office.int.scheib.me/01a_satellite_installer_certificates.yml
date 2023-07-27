@@ -1,0 +1,29 @@
+---
+# Whether to deploy certificates
+sat_deploy_certificates: true
+
+# Path to the private key for Satellite
+sat_certs_priv_key: '/tmp/fetched/localhost/satellite.office.int.scheib.me.key.pem'
+
+# Path to the public key for Satellite
+sat_certs_pub_key: '/tmp/fetched/localhost/satellite.office.int.scheib.me.cert.pem'
+
+# Path to the CA bundle certificate for Satellite
+sat_certs_ca_bundle: '/tmp/fetched/localhost/ca-chain.cert.pem'
+
+# The certificates to deploy
+sat_certs:
+  - '{{ sat_certs_priv_key }}'
+  - '{{ sat_certs_pub_key }}'
+  - '{{ sat_certs_ca_bundle }}'
+
+# Path and permissions to store the certificates defined above
+sat_cert_dest_path: '/root/certs'
+sat_cert_dest_path_owner: 'root'
+sat_cert_dest_path_group: 'root'
+sat_cert_dest_path_mode: '0700'
+
+# Permissions of above defined certificates
+sat_certs_owner: 'root'
+sat_certs_group: 'root'
+sat_certs_mode: '0600'

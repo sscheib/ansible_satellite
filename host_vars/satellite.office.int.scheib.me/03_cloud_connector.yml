@@ -1,0 +1,5 @@
+---
+# Variables to configure Satellite's Cloud Connector
+satellite_cloud_connector_url: 'https://{{ inventory_hostname }}'
+satellite_cloud_connector_user: '{{ sat_initial_user }}'
+satellite_cloud_connector_password: '{{ sat_initial_password }}'

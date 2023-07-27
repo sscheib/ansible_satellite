@@ -1,0 +1,23 @@
+---
+# Whether to enable the Foreman OpenSCAP Ansible role
+sat_scap_enable_foreman_ansible_role: true
+
+# Name of the Foreman OpenSCAP Ansible role
+sat_scap_foreman_role_name: 'theforeman.foreman_scap_client'
+
+# Whether to enable the OpenSCAP content that is shipped with Satellite
+sat_scap_enable_default_content: true
+
+# Path where to store the downloaded files of sat_scap_content_files
+sat_scap_content_download_path: '/tmp'
+
+# Whether to delete downloaded OpenSCAP files once imported
+sat_scap_cleanup_temp_files: true
+
+# OpenSCAP Content files to download, unpack and import into Satellite
+sat_scap_content_files:
+  - name: 'DISA STIG RHEL 8 (Version 1, Release 10)'
+    url: 'https://dl.dod.cyber.mil/wp-content/uploads/stigs/zip/U_RHEL_8_V1R10_STIG_SCAP_1-2_Benchmark.zip'
+
+  - name: 'DISA STIG RHEL 7 (Version 1, Release 12)'
+    url: 'https://dl.dod.cyber.mil/wp-content/uploads/stigs/zip/U_RHEL_7_V3R12_STIG_SCAP_1-2_Benchmark.zip'

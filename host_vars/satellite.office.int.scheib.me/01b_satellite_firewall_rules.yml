@@ -1,0 +1,18 @@
+---
+# This file holds the firewalld rules and services to apply
+sat_firewall_ports:
+  - port: '8000/tcp'
+    zone: 'public'
+
+  - port: '9090/tcp'
+    zone: 'public'
+
+sat_firewall_services:
+  - name: 'tftp'
+    zone: 'public'
+
+  - name: 'http'
+    zone: 'public'
+
+  - name: 'https'
+    zone: 'public'
