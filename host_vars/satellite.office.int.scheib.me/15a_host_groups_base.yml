@@ -11,8 +11,10 @@ sat_operating_system_host_groups:
     parent: 'hg-base'
     operatingsystem: 'RedHat 8.8'
     pxe_loader: 'PXELinux BIOS'
+    ptable: 'pt-standard_bios'
 
   - name: 'hg-rhel-9'
     parent: 'hg-base'
     operatingsystem: 'RedHat 9.2'
     pxe_loader: 'PXELinux BIOS'
+    ptable: 'pt-standard_bios'
