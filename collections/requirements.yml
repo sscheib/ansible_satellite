@@ -24,4 +24,4 @@ roles:
   - name: 'rhel_iso_kickstart'
     src: 'https://github.com/sscheib/ansible-role-rhel_iso_kickstart.git'
     scm: 'git'
-    version: 'v1.0.2'
+    version: 'v2.0.1'
