@@ -16,12 +16,7 @@ collections:
     version: '>=2.3.2'
 
 roles:
-  - name: 'satellite_proxmox_compute_ressource'
-    src: 'https://github.com/sscheib/ansible-role-satellite_proxmox_compute_ressource.git'
-    scm: 'git'
-    version: 'v1.0'
-
   - name: 'rhel_iso_kickstart'
     src: 'https://github.com/sscheib/ansible-role-rhel_iso_kickstart.git'
     scm: 'git'
-    version: 'v2.0.1'
+    version: 'v2.0.8'
