@@ -29,8 +29,8 @@ satellite_installer_timeout: '3600'
 
 # Options to pass to the installer
 satellite_installer_options:
-  - '--foreman-initial-organization {{ sat_initial_organization }}'  # Initial Organization to create
-  - '--foreman-initial-location {{ sat_initial_location }}'  # Initial Location to create
+  - '--foreman-initial-organization "{{ sat_initial_organization }}"'  # Initial Organization to create
+  - '--foreman-initial-location "{{ sat_initial_location }}"'  # Initial Location to create
   - '--foreman-initial-admin-username {{ sat_initial_user }}'  # Initial user to create
   - '--foreman-initial-admin-password {{ sat_initial_password }}'  # Password for the initial user
   - '--puppet-runmode none'  # No Puppet, please
