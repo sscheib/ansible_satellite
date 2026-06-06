@@ -2,6 +2,13 @@
 - name: 'Configure OpenSCAP on a Red Hat Satellite'
   hosts: 'all'
   gather_facts: false
+  module_defaults:
+    ansible.builtin.uri:
+      user: '{{ satellite_username }}'
+      password: '{{ satellite_password }}'
+      validate_certs: '{{ satellite_validate_certs }}'
+      force_basic_auth: true
+      body_format: 'json'
   tasks:
     - name: 'Handle enabling of OpenSCAP Ansible role'
       when: >
@@ -18,7 +25,7 @@
             resource: 'capsules'
             search: 'name = {{ inventory_hostname }}'
           register: '__t_capsules'
-        
+
         - name: 'Ensure only one result is returned'
           ansible.builtin.assert:
             that:
@@ -34,9 +41,6 @@
         - name: 'Enable Foreman OpenSCAP Ansible role: {{ sat_scap_foreman_role_name }}'
           ansible.builtin.uri:
             url: '{{ satellite_server_url }}/ansible/api/ansible_roles/sync'
-            user: '{{ satellite_username }}'
-            password: '{{ satellite_password }}'
-            validate_certs: '{{ satellite_validate_certs }}'
             method: 'PUT'
             body: |
               {{
@@ -48,15 +52,10 @@
                 }
 
               }}
-            force_basic_auth: true
-            body_format: 'json'
 
         - name: 'Ensure OpenSCAP role is available in Satellite'
           ansible.builtin.uri:
             url: '{{ satellite_server_url }}/ansible/api/ansible_roles'
-            user: '{{ satellite_username }}'
-            password: '{{ satellite_password }}'
-            validate_certs: '{{ satellite_validate_certs }}'
             method: 'GET'
             body: |
               {{
@@ -64,8 +63,6 @@
                   'search': 'name = ' ~ sat_scap_foreman_role_name
                 }
               }}
-            force_basic_auth: true
-            body_format: 'json'
           register: '__t_roles'
           until: __t_roles.json.results | selectattr('name', 'match', sat_scap_foreman_role_name) | length == 1
 
@@ -107,12 +104,7 @@
         - name: 'Get populated OpenSCAP contents of {{ inventory_hostname }}'
           ansible.builtin.uri:
             url: '{{ satellite_server_url }}/api/v2/compliance/scap_contents'
-            user: '{{ satellite_username }}'
-            password: '{{ satellite_password }}'
-            validate_certs: '{{ satellite_validate_certs }}'
             method: 'GET'
-            force_basic_auth: true
-            body_format: 'json'
           delegate_to: 'localhost'
           register: '__t_available_scap_contents'
 
@@ -130,9 +122,6 @@
             - name: 'Create OpenSCAP content {{ __t_content.name }}'
               ansible.builtin.uri:
                 url: '{{ satellite_server_url }}/api/v2/compliance/scap_contents'
-                user: '{{ satellite_username }}'
-                password: '{{ satellite_password }}'
-                validate_certs: '{{ satellite_validate_certs }}'
                 method: 'POST'
                 body: |
                   {{
@@ -144,8 +133,6 @@
                       }
                     }
                   }}
-                force_basic_auth: true
-                body_format: 'json'
                 status_code: 201
               changed_when: true
               when: >
@@ -159,12 +146,7 @@
             - name: 'Delete OpenSCAP content {{ __t_conent.name }}'
               ansible.builtin.uri:
                 url: '{{ satellite_server_url }}/api/v2/compliance/scap_contents/{{ __t_content.1.id }}'
-                user: '{{ satellite_username }}'
-                password: '{{ satellite_password }}'
-                validate_certs: '{{ satellite_validate_certs }}'
                 method: 'DELETE'
-                force_basic_auth: true
-                body_format: 'json'
               changed_when: true
               when: >
                 __t_content.0.name == __t_content.1.title
@@ -178,9 +160,6 @@
             - name: 'Re-create OpenSCAP content {{ __t_content.name }}'
               ansible.builtin.uri:
                 url: '{{ satellite_server_url }}/api/v2/compliance/scap_contents'
-                user: '{{ satellite_username }}'
-                password: '{{ satellite_password }}'
-                validate_certs: '{{ satellite_validate_certs }}'
                 method: 'POST'
                 body: |
                   {{
@@ -192,8 +171,6 @@
                       }
                     }
                   }}
-                force_basic_auth: true
-                body_format: 'json'
                 status_code: 201
               changed_when: true
               when: >
@@ -219,9 +196,6 @@
     - name: 'Enable default OpenSCAP content provided by Satellite'
       ansible.builtin.uri:
         url: '{{ satellite_server_url }}/api/v2/compliance/scap_contents/bulk_upload'
-        user: '{{ satellite_username }}'
-        password: '{{ satellite_password }}'
-        validate_certs: '{{ satellite_validate_certs }}'
         method: 'POST'
         body: |
           {{
@@ -229,8 +203,6 @@
               'type': 'default'
             }
           }}
-        force_basic_auth: true
-        body_format: 'json'
       delegate_to: 'localhost'
       when: >
         sat_scap_enable_default_content is defined

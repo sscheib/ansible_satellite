@@ -2,26 +2,22 @@
 - name: 'Publish and promote (composite) content views'
   hosts: 'all'
   gather_facts: false
-
+  module_defaults:
+    groups/redhat.satellite.satellite:
+      username: '{{ satellite_username }}'
+      password: '{{ satellite_password }}'
+      server_url: '{{ satellite_server_url }}'
+      validate_certs: '{{ satellite_validate_certs }}'
+      organization: '{{ satellite_organization }}'
   tasks:
     - name: 'Retrieve all content views'
       redhat.satellite.resource_info:
-        username: '{{ satellite_username }}'
-        password: '{{ satellite_password }}'
-        server_url: '{{ satellite_server_url }}'
-        validate_certs: '{{ satellite_validate_certs }}'
-        organization: '{{ satellite_organization }}'
         resource: 'content_views'
         search: 'composite = false AND name != "Default Organization View"'
       register: '__t_cvs'
 
     - name: 'Publish content view version'
       redhat.satellite.content_view_version:
-        username: '{{ satellite_username }}'
-        password: '{{ satellite_password }}'
-        server_url: '{{ satellite_server_url }}'
-        validate_certs: '{{ satellite_validate_certs }}'
-        organization: '{{ satellite_organization }}'
         content_view: '{{ __t_cv.name }}'
         state: 'present'
         description: 'initial'
@@ -60,22 +56,12 @@
 
     - name: 'Retrieve all composite content views'
       redhat.satellite.resource_info:
-        username: '{{ satellite_username }}'
-        password: '{{ satellite_password }}'
-        server_url: '{{ satellite_server_url }}'
-        validate_certs: '{{ satellite_validate_certs }}'
-        organization: '{{ satellite_organization }}'
         resource: 'content_views'
         search: 'composite = true'
       register: __t_ccvs
 
     - name: 'Publish and optionally promote composite content view versions'
       redhat.satellite.content_view_version:
-        username: '{{ satellite_username }}'
-        password: '{{ satellite_password }}'
-        server_url: '{{ satellite_server_url }}'
-        validate_certs: '{{ satellite_validate_certs }}'
-        organization: '{{ satellite_organization }}'
         content_view: '{{ __t_ccv.name }}'
         state: 'present'
         description: 'initial'
